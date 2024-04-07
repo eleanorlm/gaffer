@@ -39,11 +39,12 @@ const resolvePath = (
 }
 
 const _handlePullFile = (node, filePath, pathData) => {
-  const { outputPath, mountPoint } = pathData
-  const fileName = path.parse(filePath).name
+  const { outputPath, mountPoint, includePath } = pathData
+  const parsedPath = path.parse(filePath)
+  const fileName = parsedPath.name
 
-  // TODO: List of files to ignore, etc.
   if (fileName === '.gitkeep') return
+  if (parsedPath.ext == '.md') return
 
   if (node[fileName] && node[fileName].$path) {
     throw new Error(
@@ -54,9 +55,9 @@ const _handlePullFile = (node, filePath, pathData) => {
   let usePath = `>${path.relative(outputPath, filePath)}`
 
   if (mountPoint) {
-    const linkName = fs.readlinkSync(mountPoint)
-    const childPath = path.relative(linkName, filePath)
-    usePath = `>${path.relative(outputPath, childPath)}`
+    const mountRelative = path.relative(outputPath, mountPoint)
+    const childPath = path.relative(mountPoint, filePath)
+    usePath = `>${path.join(mountRelative, childPath)}`
   }
 
   if (!node[fileName]) node[fileName] = {}
