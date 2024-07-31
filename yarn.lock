@@ -3686,7 +3686,7 @@ functions-have-names@^1.2.2:
   version "1.2.3"
 
 "gaffer-rbx@file:Q:\\Code\\tools\\gaffer":
-  version "0.0.1-alpha.4"
+  version "0.0.1-alpha.7"
   resolved "file:gaffer"
   dependencies:
     "@iarna/toml" "3.0.0"
