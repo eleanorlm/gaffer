@@ -18,27 +18,17 @@ const importTree = (scheme) => {
 
 module.exports = async (state) => {
   for (const projectName of state.projectNames) {
-    // 1. Import project's tree.json files
+    // 1a. Import project's tree.json files
     const trees = []
     const project = state.schemes.get(projectName)
 
-    // Include the base tree (default)
+    // 1b. Include the base tree (default)
     if (project.use_base_tree)
       trees.push(
         transformNode(baseTree, project.outputs.project, __dirname, state.root)
       )
 
-    // And now include the project specific tree
-    trees.push(
-      transformNode(
-        importTree(project),
-        project.outputs.project,
-        project.path,
-        state.root
-      )
-    )
-
-    // 2. Bring in include's tree.json files
+    // 2a. Bring in include's tree.json files
     for (const includeName of project.includes) {
       const include = state.schemes.get(includeName)
       trees.push(
@@ -51,6 +41,16 @@ module.exports = async (state) => {
         )
       )
     }
+
+    // 2b. And now include the project specific tree
+    trees.push(
+      transformNode(
+        importTree(project),
+        project.outputs.project,
+        project.path,
+        state.root
+      )
+    )
 
     // 3. Merge the trees and transform them
     const tree = merge({}, ...trees)
